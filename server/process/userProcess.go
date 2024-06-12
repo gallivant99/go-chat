@@ -25,7 +25,7 @@ func login(userName, passWord string) (user model.User, err error) {
 }
 
 // 响应客户端
-func (this *UserProcess) responseClient(responseMessageType string, code int, data string, err error) {
+func (up *UserProcess) responseClient(responseMessageType string, code int, data string, err error) {
 	var responseMessage common.ResponseMessage
 	responseMessage.Code = code
 	responseMessage.Type = responseMessageType
@@ -36,12 +36,12 @@ func (this *UserProcess) responseClient(responseMessageType string, code int, da
 		fmt.Printf("responseClient序列化错误: %v", err)
 	}
 
-	dispatcher := utils.Dispatcher{Conn: this.Conn}
+	dispatcher := utils.Dispatcher{Conn: up.Conn}
 
-	err = dispatcher.WriteData(responseData)
+	dispatcher.WriteData(responseData)
 }
 
-func (this *UserProcess) UserRegister(message string) (err error) {
+func (up *UserProcess) UserRegister(message string) (err error) {
 	var info common.RegisterMessage
 	var code int
 	data := ""
@@ -61,11 +61,11 @@ func (this *UserProcess) UserRegister(message string) (err error) {
 	default:
 		code = 500
 	}
-	this.responseClient(common.RegisterResponseMessageType, code, data, err)
+	up.responseClient(common.RegisterResponseMessageType, code, data, err)
 	return
 }
 
-func (this *UserProcess) UserLogin(message string) (err error) {
+func (up *UserProcess) UserLogin(message string) (err error) {
 	var info common.LoginMessage
 	var code int
 	var data string
@@ -81,7 +81,7 @@ func (this *UserProcess) UserLogin(message string) (err error) {
 		code = common.LoginSucceed
 		// save user conn status
 		clientConn := model.ClientConn{}
-		clientConn.Save(user.ID, user.Name, this.Conn)
+		clientConn.Save(user.ID, user.Name, up.Conn)
 
 		userInfo := common.UserInfo{ID: user.ID, UserName: user.Name}
 		info, _ := json.Marshal(userInfo)
@@ -93,6 +93,6 @@ func (this *UserProcess) UserLogin(message string) (err error) {
 	default:
 		code = 500
 	}
-	this.responseClient(common.LoginResponseMessageType, code, data, err)
+	up.responseClient(common.LoginResponseMessageType, code, data, err)
 	return
 }
