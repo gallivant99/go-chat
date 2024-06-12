@@ -21,16 +21,16 @@ func (p *Processor) messageProcess(message common.Message) (err error) {
 		up := UserProcess{Conn: p.Conn}
 		err = up.UserLogin(message.Data)
 		if err != nil {
-			fmt.Printf("some error: %v\n", err)
+			fmt.Printf("登录错误: %v\n", err)
 		}
 	case common.RegisterMessageType:
 		up := UserProcess{Conn: p.Conn}
 		err = up.UserRegister(message.Data)
 		if err != nil {
-			fmt.Printf("some error when register: %v\n", err)
+			fmt.Printf("注册错误: %v\n", err)
 		}
 	default:
-		fmt.Printf("other type\n")
+		fmt.Printf("其他选项\n")
 	}
 	return
 }
@@ -46,17 +46,17 @@ func (p *Processor) MainProcess() {
 			if err == io.EOF {
 				cc := model.ClientConn{}
 				cc.Delete(p.Conn)
-				fmt.Printf("client closed!\n")
+				fmt.Printf("客户端连接关闭!\n")
 				break
 			}
-			fmt.Printf("get login message error: %v", err)
+			fmt.Printf("从连接获取数据错误！: %v", err)
 		}
 
 		// 处理来客户端的消息
 		// 按照消息的类型，使用不同的处理方法
 		err = p.messageProcess(message)
 		if err != nil {
-			fmt.Printf("some error: %v\n", err)
+			fmt.Println(err)
 			break
 		}
 	}

@@ -32,26 +32,22 @@ func dialogue(conn net.Conn) {
 }
 
 func main() {
-	fmt.Printf("Server is already\n")
+	fmt.Printf("服务端已启动！\n")
 
 	serverInfo := config.Configuration.ServerInfo
 	fmt.Println("serverInfo", serverInfo)
 	listener, err := net.Listen("tcp", serverInfo.Host)
 	if err != nil {
-		fmt.Printf("some error when listen server, error: %v", err)
-	
+		fmt.Printf("服务端运行错误: %v", err)
 	}
 	defer listener.Close()
-	if err != nil {
-		fmt.Printf("some error when run server, error: %v", err)
-	}
 
 	for {
-		fmt.Printf("Waiting for client...\n")
+		fmt.Printf("正在等待客户端消息...\n")
 
 		conn, err := listener.Accept()
 		if err != nil {
-			fmt.Printf("some error when accept server, error: %v", err)
+			fmt.Printf("接受新连接时错误: %v", err)
 		}
 
 		// 一旦链接成功，在启动一个协程和客户端保持通讯
